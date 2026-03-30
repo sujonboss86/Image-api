@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image API Test</title>
+</head>
+<body>
+  <h2>🚀 Generate Image from Browser</h2>
+  <input type="text" id="prompt" placeholder="Enter your prompt" size="50">
+  <button onclick="generateImage()">Generate</button>
+  <p id="status"></p>
+  <img id="result" style="max-width:90%; margin-top:20px;" />
+
+  <script>
+    async function generateImage() {
+      const prompt = document.getElementById("prompt").value;
+      document.getElementById("status").innerText = "⏳ Generating...";
+      document.getElementById("result").src = "";
+
+      const res = await fetch("https://image-api-nj0b.onrender.com/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await res.json();
+      if (data.file) {
+        // Render doesn't provide direct public URL, so just show note
+        document.getElementById("status").innerText = data.message + " (Check server for file)";
+        // If you setup /image/:filename route, you could show the image directly
+        // document.getElementById("result").src = `https://image-api-nj0b.onrender.com/image/${data.file}`;
+      } else {
+        document.getElementById("status").innerText = data.error || "Failed";
+      }
+    }
+  </script>
+</body>
+</html>
